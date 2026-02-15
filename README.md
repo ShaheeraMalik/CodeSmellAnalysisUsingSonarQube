@@ -1,6 +1,9 @@
-# UniversityCourseRegistrationSystem
+# University Course Registration System
 
-A modern web-based prototype for course registration, built with **Node.js**, **Express**, **MongoDB**, and **EJS**. This system addresses key problems such as scheduling conflicts, real-time seat availability, prerequisite tracking, and more.
+This project is a modern web-based prototype for course registration, built with **Node.js**, **Express**, **MongoDB**, and **EJS**. It addresses key problems such as scheduling conflicts, real-time seat availability, prerequisite tracking, and more.
+
+> [!NOTE]
+> This project is a **forked/cloned** repository for research and assignment purposes (Software Reengineering - Assignment #1: Code Smell Analysis).
 
 ---
 
@@ -10,8 +13,8 @@ A modern web-based prototype for course registration, built with **Node.js**, **
 2. [Tech Stack](#tech-stack)
 3. [Project Structure](#project-structure)
 4. [Installation & Setup](#installation--setup)
-5. [Configuration](#configuration)
-6. [Usage](#usage)
+5. [Docker Execution](#docker-execution)
+6. [SonarQube Analysis](#sonarqube-analysis)
 7. [GitHub Repository](#github-repository)
 8. [License](#license)
 
@@ -20,16 +23,18 @@ A modern web-based prototype for course registration, built with **Node.js**, **
 ## Features
 
 ### 1. **Admin Features**
+
 - **Login**: Admins authenticate with a username & password.
 - **Course Management**: Add, update, or delete courses; set prerequisites; manage scheduling (days, times).
 - **Student Management**: View & override student registrations; remove or mark courses as completed for any student.
 - **Seat Management**: Adjust capacity for each course; see real-time seat availability.
-- **Reports**: 
+- **Reports**:
   - Students registered for a specific course
   - Courses with available seats
   - Students missing prerequisites
 
 ### 2. **Student Features**
+
 - **Login**: Students log in with their roll number & password (no sign-up).
 - **View & Register Courses**: Filter courses by department, level, or time of day; see real-time seat counts.
 - **Weekly Schedule**: An interactive table that updates automatically when registering or dropping a course.
@@ -37,6 +42,7 @@ A modern web-based prototype for course registration, built with **Node.js**, **
 - **Mark Course as Completed**: Admin or student can mark courses as completed, removing them from “in-progress” schedule.
 
 ### 3. **Real-Time Updates**
+
 - **Seat Availability**: A polling mechanism updates seat counts every 10 seconds without refreshing the page.
 - **Interactive Schedule**: Registering or dropping a course re-renders the weekly schedule on the fly.
 
@@ -47,9 +53,8 @@ A modern web-based prototype for course registration, built with **Node.js**, **
 - **Node.js** & **Express**: Backend server and routing.
 - **MongoDB** & **Mongoose**: Database for courses, students, admin data.
 - **EJS**: Templating engine for dynamic views.
-- **HTML5**, **CSS3**, **JavaScript**: Front-end structure and styling.
-- **Bootstrap / Tailwind** (optional or custom CSS) for styling & responsiveness.
-- **Session / Cookie** (express-session) for login sessions (if using session-based auth).
+- **Docker**: For containerized deployment.
+- **SonarQube**: For static code analysis and code smell detection.
 
 ---
 
@@ -77,9 +82,10 @@ A modern web-based prototype for course registration, built with **Node.js**, **
 │   │   └── admindashboard.ejs
 │   ├── student
 │   │   └── studentDashboard.ejs
-│   └── partials (optional)
 ├── .env                # Environment variables
 ├── server.js           # Entry point for Express
+├── Dockerfile          # Docker configuration
+├── sonar-project.properties # SonarQube configuration
 ├── package.json
 └── README.md           # Project documentation
 ```
@@ -90,81 +96,75 @@ A modern web-based prototype for course registration, built with **Node.js**, **
 
 1. **Clone** the repository:
    ```bash
-   git clone https://github.com/<YourUsername>/<YourRepoName>.git
+   git clone https://github.com/ShaheeraMalik/UniversityCourseRegistrationSystem.git
    ```
 2. **Install** dependencies:
    ```bash
-   cd <YourRepoName>
    npm install
    ```
 3. **Configure** environment:
    - Create a `.env` file in the root directory.
-   - Add `MONGO_URI`, `PORT`, and any other variables:
-     ```env
-     MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
-     PORT=5000
-     ```
+   - Add `MONGO_URI`, `PORT`, and any other variables.
 4. **Run** the server:
    ```bash
    npm start
    ```
-   or
+
+---
+
+## Docker Execution
+
+The project includes a `Dockerfile` for easy containerization.
+
+### Prerequisites
+
+- Docker installed and running.
+
+### Steps to Run
+
+1. **Build the Docker Image**:
    ```bash
-   npm run dev
+   docker build -t university-course-registration .
    ```
-   if you use **nodemon**.
-
-5. **Open** in your browser:
+2. **Run the Container**:
+   ```bash
+   docker run -p 5000:5000 --env-file .env university-course-registration
    ```
-   http://localhost:5000
-   ```
-   (or whichever port you configured).
+3. **Access the Application**:
+   Open [http://localhost:5000](http://localhost:5000) in your browser.
 
 ---
 
-## Configuration
+## SonarQube Analysis
 
-- **MongoDB**: Hosted or local. Update your `.env` with the correct URI.
-- **Session**: If you use session-based auth, set `SESSION_SECRET` in `.env`.
-- **Admin Credentials**: Insert an admin record in the database or seed data.
-- **Student Records**: Insert sample students with roll numbers, courses, etc.
+The project is configured for static code analysis using SonarQube via the `sonar-project.properties` file.
 
----
+### Steps to Analyze
 
-## Usage
-
-1. **Admin Login**:
-   - Go to `/auth/login` and select “admin” or enter admin credentials.  
-   - Manage courses, seats, prerequisites, and student registrations in the Admin Dashboard (`/admin/admindashboard`).
-
-2. **Student Login**:
-   - Go to `/auth/login` and use your roll number & password.
-   - Filter courses, register, see your weekly schedule in the Student Dashboard (`/student/studentDashboard`).
-
-3. **Filtering**:
-   - Department & Course Level are text fields with optional datalists for suggestions.
-   - Time of day is a select with “morning” or “afternoon.”
-   - Click **Apply Filters** to show/hide matching courses.
-
-4. **Weekly Schedule**:
-   - Register or drop a course → The schedule table updates automatically.
-   - Completed courses do not appear in “in-progress” schedule.
-
-5. **Reports** (Admin):
-   - Access various endpoints or UI forms to see which students are missing prerequisites, or courses with seats, etc.
+1. **Ensure SonarQube is Running**:
+   You should have a SonarQube instance available (local or server).
+2. **Install Sonar-Scanner**:
+   Ensure you have the `sonar-scanner` CLI tool installed.
+3. **Run the Scan**:
+   Execute the following command in the project root:
+   ```bash
+   sonar-scanner \
+     -Dsonar.projectKey=university-course-registration \
+     -Dsonar.sources=. \
+     -Dsonar.host.url=http://localhost:9000 \
+     -Dsonar.login=<YOUR_SONAR_TOKEN>
+   ```
+   _Note: Replace `http://localhost:9000` and `<YOUR_SONAR_TOKEN>` with your actual SonarQube URL and authentication token._
 
 ---
-
 
 ## GitHub Repository
 
 **Repository Name**: `UniversityCourseRegistrationSystem`
-
 **Repository Link**: [GitHub Repo](https://github.com/ShaheeraMalik/UniversityCourseRegistrationSystem.git)
 
 ---
 
 ## License
-This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
 
----
+This project is licensed under the **MIT License**.
